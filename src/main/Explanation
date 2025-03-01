@@ -1,0 +1,10 @@
+Explanation of Key Steps
+setUp and tearDown: These methods are used to initialize the WebDriver and close the browser after the tests are executed.
+
+Test Annotations:
+@BeforeClass: This annotation ensures that the setup method runs before any tests.
+@Test: Marks the methods that are test cases.
+@AfterClass: Ensures the browser is closed after all tests.
+
+Selenium WebDriver: Used to interact with web elements, like finding and clicking on buttons, checking for visibility, and filling in forms.
+TestNG Assertions: Used to verify that the expected values match the actual results during the tests.
