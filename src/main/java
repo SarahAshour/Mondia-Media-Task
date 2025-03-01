@@ -1,0 +1,125 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.Select;
+import org.testng.Assert;
+import org.testng.annotations.*;
+
+import java.util.List;
+
+public class MovieStoreTest {
+
+    private WebDriver driver;
+
+    @BeforeClass
+    public void setUp() {
+        // Set up WebDriver (Use WebDriverManager to avoid manual driver setup)
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+    }
+
+    @Test
+    public void testAddMovieToCart() {
+        // Step 1: Open the website
+        driver.get("http://www.konakart.com/konakart/Welcome.action");
+
+        // Step 2: Select DVD movies category
+        driver.findElement(By.linkText("DVD Movies")).click();
+
+        // Step 3: Select Action category
+        driver.findElement(By.linkText("Action")).click();
+
+        // Step 4: Sort by price Low to High
+        WebElement sortByDropdown = driver.findElement(By.id("sortBy"));
+        Select sortBySelect = new Select(sortByDropdown);
+        sortBySelect.selectByVisibleText("Price: Low to High");
+
+        // Step 5: Add the last movie to the cart
+        List<WebElement> movieItems = driver.findElements(By.cssSelector(".productList .product"));
+        WebElement lastMovie = movieItems.get(movieItems.size() - 1);
+        lastMovie.findElement(By.cssSelector(".addToCartBtn")).click();
+
+        // Step 6: Verify the item is added to the cart without opening the cart page
+        WebElement cartMenu = driver.findElement(By.id("headerCart"));
+        cartMenu.click();
+        WebElement cartItem = driver.findElement(By.cssSelector(".cartItem"));
+        Assert.assertTrue(cartItem.isDisplayed(), "Item should be in the cart.");
+    }
+
+    @Test
+    public void testMovieDetailsAndCheckout() {
+        // Step 7: Open the first item (details page)
+        List<WebElement> movieItems = driver.findElements(By.cssSelector(".productList .product"));
+        movieItems.get(0).click();
+
+        // Step 8: Verify that the name is the same as the one you clicked
+        WebElement movieName = driver.findElement(By.cssSelector(".movieTitle"));
+        Assert.assertTrue(movieName.getText().contains("Movie Name"), "Movie name doesn't match.");
+
+        // Step 9: Verify that the movie has 4 screenshots
+        List<WebElement> screenshots = driver.findElements(By.cssSelector(".screenshots img"));
+        Assert.assertEquals(screenshots.size(), 4, "The movie should have 4 screenshots.");
+
+        // Step 10: Select 2 quantities and add to the cart
+        WebElement quantityField = driver.findElement(By.id("quantity"));
+        quantityField.clear();
+        quantityField.sendKeys("2");
+        driver.findElement(By.id("addToCartBtn")).click();
+
+        // Step 11: Verify item added to the cart
+        WebElement cartItem = driver.findElement(By.cssSelector(".cartItem"));
+        Assert.assertTrue(cartItem.isDisplayed(), "Item should be in the cart.");
+    }
+
+    @Test
+    public void testShoppingCartAndCheckout() {
+        // Step 12: Open shopping cart
+        driver.findElement(By.id("headerCart")).click();
+
+        // Step 13: Verify added items and subtotal
+        List<WebElement> cartItems = driver.findElements(By.cssSelector(".cartItem"));
+        Assert.assertTrue(cartItems.size() > 0, "The cart should have at least one item.");
+        WebElement subtotal = driver.findElement(By.id("subtotal"));
+        Assert.assertTrue(subtotal.getText().contains("$"), "Subtotal should contain price.");
+
+        // Step 14: Proceed to checkout as a guest
+        driver.findElement(By.id("checkoutBtn")).click();
+        driver.findElement(By.id("guestCheckout")).click();
+
+        // Step 15: Fill out data (example data)
+        driver.findElement(By.id("email")).sendKeys("testuser@example.com");
+        driver.findElement(By.id("shippingAddress")).sendKeys("123 Test Street");
+        driver.findElement(By.id("phone")).sendKeys("1234567890");
+        driver.findElement(By.id("billingAddress")).sendKeys("123 Test Street");
+
+        // Step 16: Confirm the address
+        driver.findElement(By.id("confirmAddress")).click();
+
+        // Step 17: Change shipping method and verify price change
+        WebElement shippingMethodDropdown = driver.findElement(By.id("shippingMethod"));
+        Select shippingSelect = new Select(shippingMethodDropdown);
+        shippingSelect.selectByVisibleText("Standard Shipping");
+        WebElement shippingPrice = driver.findElement(By.id("shippingPrice"));
+        Assert.assertTrue(shippingPrice.isDisplayed(), "Shipping price should be displayed.");
+        
+        // Step 18: Confirm order and verify the order is processed
+        driver.findElement(By.id("confirmOrder")).click();
+        WebElement orderStatus = driver.findElement(By.id("orderStatus"));
+        Assert.assertTrue(orderStatus.getText().contains("Pending"), "Order status should be pending.");
+
+        // Step 19: Verify that the name and price of each item is the same as before
+        WebElement orderItemName = driver.findElement(By.cssSelector(".orderItemName"));
+        WebElement orderItemPrice = driver.findElement(By.cssSelector(".orderItemPrice"));
+        Assert.assertTrue(orderItemName.getText().equals("Movie Name"), "Item name should match.");
+        Assert.assertTrue(orderItemPrice.getText().equals("$20.00"), "Item price should match.");
+    }
+
+    @AfterClass
+    public void tearDown() {
+        // Close the browser
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
