@@ -26,3 +26,13 @@ This is an automation project for testing the KonaKart e-commerce website using 
 
    ```bash
    mvn install
+
+3. **Running the Tests:** You can run the tests using TestNG. Either run it through your IDE or from the command line using:
+
+bash
+mvn test
+
+4. **TestNG XML:** The tests can be run using the provided TestNG XML configuration (testng.xml). If running from the command line, execute:
+
+bash
+mvn test -DsuiteXmlFile=testng.xml
