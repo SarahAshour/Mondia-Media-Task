@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="MovieStore Test Suite">
+    <test name="Test Movie Store Checkout">
+        <classes>
+            <class name="MovieStoreTest"/>
+        </classes>
+    </test>
+</suite>
