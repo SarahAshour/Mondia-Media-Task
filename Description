@@ -1,11 +1,12 @@
 Project Overview
-The project automates the following steps on the KonaKart website:
 
+The project automates the following steps on the KonaKart website:
 1. Navigate to the website.
 2. Select categories and sort the products.
 3. Add a product to the cart and validate the cart without opening it.
 4. Perform checkout actions as a guest.
 5. Validate the final order details.
+
  Key Test Scenarios:
 1. Add Movie to Cart: Add the last item from the "Action" category to the cart and verify it.
 2. Verify Item Details: Open the first item and verify its details, including screenshots and price.
